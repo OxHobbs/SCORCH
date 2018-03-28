@@ -1,0 +1,5 @@
+.kitchen
+.kitchen.yml
+.kitchen.local.yml
+modules
+examples/SCORCH-SingleServer.ps1
