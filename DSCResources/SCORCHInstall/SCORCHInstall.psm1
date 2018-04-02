@@ -32,7 +32,7 @@ function Get-TargetResource
         [System.String]
         $DatabaseServer,
 
-        [parameter(Mandatory = $true)]
+        [parameter()]
         [System.Management.Automation.PSCredential]
         $DatabaseUserCredential,
 
@@ -95,7 +95,7 @@ function Set-TargetResource
         [System.String]
         $DatabaseName = 'Orchestrator',
 
-        [parameter(Mandatory = $true)]
+        [parameter()]
         [System.Management.Automation.PSCredential]
         $DatabaseUserCredential,
 
@@ -146,12 +146,16 @@ function Set-TargetResource
         $null = $InstallString.Add("/ServicePassword:$($ServiceUserCredential.GetNetworkCredential().Password)")
         $null = $InstallString.Add("/Components:$Components")
         $null = $InstallString.Add("/DbServer:$DatabaseServer")
-        $null = $InstallString.Add("/DbUser:$($DatabaseUserCredential.UserName)")
-        $null = $InstallString.Add("/DbPassword:$($DatabaseUserCredential.GetNetworkCredential().Password)")
         $null = $InstallString.Add("/DbNameNew:$DatabaseName")
         $null = $InstallString.Add("/WebServicePort:$WebServicePort")
         $null = $InstallString.Add("/WebConsolePort:$WebConsolePort")
         $null = $InstallString.Add("/EnableErrorReporting:$ErrorReporting")
+
+        if ($DatabaseUserCredential)
+        {
+            $null = $InstallString.Add("/DbUser:$($DatabaseUserCredential.UserName)")
+            $null = $InstallString.Add("/DbPassword:$($DatabaseUserCredential.GetNetworkCredential().Password)")
+        }
 
         if ($InstallDirectory)
         {
@@ -198,7 +202,6 @@ function Set-TargetResource
         $Process = StartWin32Process -Path $Installer -Arguments $FinalInstallString -Credential $SetupCredential -AsTask
         Write-Verbose $Process
         WaitForWin32ProcessEnd -Path $Installer -Arguments $FinalInstallString -Credential $SetupCredential
-
     }
     elseif ($Ensure -eq 'Absent')
     {
@@ -251,7 +254,7 @@ function Test-TargetResource
         [System.String]
         $DatabaseName,
 
-        [parameter(Mandatory = $true)]
+        [parameter()]
         [System.Management.Automation.PSCredential]
         $DatabaseUserCredential,
 
